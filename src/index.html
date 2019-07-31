@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<head>
+    <title>Wildfires in Portugal</title>
+
+    <meta charset="utf-8" />
+
+    <link rel="stylesheet" href="css/leaflet.css"/>
+    <link rel="stylesheet" href="css/d3.slider.css" /> 
+    <link rel="stylesheet" type="text/css" href="./css/demo.css">
+    <link rel="stylesheet" type="text/css" href="./css/set2.css">
+</head>
+ 
+<style>
+
+body{
+  font-family: Verdana,Arial,sans-serif;
+  font: 10px sans-serif;
+  position: relative;
+  width: 960px;
+  background-color: #ffffff;
+  float: center;
+}
+
+hr.style1{
+  border-top: 1px solid #8c8b8b;
+}
+html { overflow-y: hidden;overflow-x: hidden; }
+
+.axis path,
+.axis line {
+  fill: none;
+  line-height: 5;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.legendL {
+    font-size: 10px;
+    text-anchor: end;
+}
+
+div.relative {
+    position: relative;
+     visibility: visible;
+    top: -750px;
+    left: 720px;
+    width: 420px;
+    height: 440px;
+}
+
+div.absolute {
+    position: absolute;
+     visibility: visible;
+    top:340px;
+    left:1100px;
+    width: 600px;
+    height: 300px;
+}
+
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 0px 8px 8px 8px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
+}
+
+.button {
+    background-color: #555555;
+    border: none;
+    color: white;
+    padding: 10px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin: 4px 2px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+}
+
+.button1 {
+    background-color: white; 
+    color: black; 
+
+    border: 1px solid #555555;
+}
+
+
+
+
+#map { 
+  width: 500px; 
+  height: 700px;
+}
+
+.info { 
+  padding: 6px 8px; 
+  background: white; 
+  background: rgba(255,255,255,0.8); 
+  box-shadow: 0 0 15px rgba(0,0,0,0.2); 
+  border-radius: 5px; 
+} 
+
+.info h4 { 
+  margin: 0 0 5px; 
+  color: #777; 
+}
+
+.legend { 
+  text-align: left; 
+  line-height: 18px; 
+  color: #555; 
+} 
+
+.legend i { 
+  width: 18px; 
+  height: 18px; 
+  float: left; 
+  margin-right: 8px; 
+  opacity: 0.7; 
+}
+
+label {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+</style>
+
+  <script src ="js/buttonsLogic.js"></script>
+
+
+
+  <div class="wrapper" style="position:relative;top: 0px; left: 480px;" > 
+    <div id="slider" style="width: 900px;"></div>
+ </div>
+
+ <div class="codrops-header" style="position:relative;text-align:center;top: 10px;left: 560px">
+     <h1 id="header1" style="font-size:15px">This is a heading</h1>
+     <hr class="style1" style="width: 450px">
+      <p id="header1paragraph" style="font-size:15px">This is a paragraph.</p>
+    </div>
+    <div class="codrops-header" style="position:relative;text-align:center;top: -135px;left: 1075px">
+      <h1 id="header2" style="font-size:15px">This is a heading</h1>
+      <hr class="style1" style="width: 390px">
+        <p  id="header2paragraph" style="font-size:15px">This is a paragraph.</p>
+    </div>
+      
+ <div id="map"  style="top: -170px; left: 110px;" class="leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom">
+ </div>
+ <body>
+
+
+
+ <button class="button button1" title="Número de ocorrências por tipo de solo"  style="position:absolute;top: 254px; left: 1281px; width:250px;background-color: grey;  color: white; visibility: visible" id="ButtonCausas" onclick="changeButtonCausas();changeDataBaseBarChart();" >Área ardida por Tipos de Solo</button>
+  <button class="button button1" title="Número de ocorrências por causa" style="position:absolute;top: 254px; left: 1530px; width:250px;visibility: visible" id="ButtonOcorrencias" onclick="changeButtonOcorrencias();changeDataBaseBarChart();" >Ocorrências por Causa</button>
+    <button class="button button1" title="Número de ocorrências de incendios por hora" style="position:absolute;width:200px;top: 250px; left: 699px;background-color: grey;  color: white;visibility: visible" id="ButtonRadialHora" onclick="changeButtonRadialHora();changeDataBaseRadial();" >Ocorrências por Hora</button>
+    <button class="button button1" title="Número de ocorrências de incendios por mês" style="position:absolute;width:200px;top: 250px; left: 898px;visibility: visible" id="ButtonRadialMes" onclick="changeButtonRadialMes();changeDataBaseRadial();" >Ocorrências por mês</button>
+ <div class="relative" id='radialchart'></div>
+ <div class="absolute" id='barchart'></div>
+  <button class="button button1" title="Choropleth, relativo à área ardida em hectares" style="position:absolute;top: 130px; left: 47px;background-color: grey;  color: white;" id="AreaArdida" onclick="changeToChoropleth();addRemoveInfoBox(false);addRemoveInfoBox(true)" >Área Ardida</button>
+  <button class="button button1" title="Heatmap, relativo ao número de ocorrências" style="position:absolute;top: 130px; left: 181px;" id="Nocorrencias" onclick="changeToHeatMap();changeMapLineStacked();addRemoveInfoBox(false);" >Nº Ocorrências</button>
+  <button class="button button1" title="Escolha o distrito a detalhar" style="position:absolute;top: 130px; left: 355px;background-color: grey;  color: white;" id="DetalharD" onclick="DetalharDistrito();" >Detalhar Distrito</button>
+  <button class="button button1" title="Selecione os distritos a comparar no Line Chart" style="position:absolute;top: 130px; left: 513px;" id="CompararD" onclick="CompararDistrito();" >Comparar Distritos</button>
+
+   <div style="position:relative;width: 2000px;top: -840px; left: 700px;" id='lineChart'></div>
+    <div style="position:relative;top: -1300px; left: 700px;visibility: hidden" id='Stackedbarchart'></div>
+</div>
+
+
+
+
+
+
+<script src="js/d3.v3.min.js"></script>
+<script src="js/d3.tip.js"></script>
+<script src="js/radial.js"></script> 
+<script src = "js/bar_chart.js"></script>
+<script src="js/d3.slider.js"></script>
+<script src = "js/linechart.js"></script>
+<script src = "js/linechartMini.js"></script>
+
+    <script src="js/leaflet.js"></script>
+    
+    <script src="js/leaflet-heat.js"></script>
+  <script src="data/wildfires.js"></script>
+  <script src="data/distritos.js"></script>
+    <script src = "js/map.js"></script>
+   <script src = "js/stackebar.js"></script>
+
+  <script src="js/presentinfo.js">
+  </script>
+  <script> presentInfoDisplay();</script>
+
+
+
